@@ -19,3 +19,7 @@ yarn-error.log*
 *.njsproj
 *.sln
 *.sw?
+
+# ignore modules lock
+package-lock.json
+yarn.lock
