@@ -58,21 +58,34 @@
 		        </template>
 		      </el-table-column>
 		    </el-table>
+		    <div class="block">
+			    <span class="demonstration">完整功能</span>
+			    <el-pagination
+			      @size-change="handleSizeChange"
+			      @current-change="handleCurrentChange"
+	
+			      :page-sizes="[100, 200, 300, 400]"
+			      :page-size="100"
+			      layout="total, sizes, prev, pager, next, jumper"
+			      :total="400">
+			    </el-pagination>
+			</div>
 		</div>
 	</div>
 </template>
 
 <script>
 	export default {
-		methods: {
-	      handleClick(row) {
-	        console.log(row);
-	      }
-	    },
+		created(){
+			this.tableData = this.data
+		},
+		
+	    
 		data() {
 	      return {
 	        activeIndex: '1',
-	        tableData:[
+	        tableData:[],
+	        data:[
 	        	{
 	        		basicinfor:'张三1',
 	        		weixinID:'321654asdasd',
@@ -128,13 +141,29 @@
 		methods: {
 	      handleSelect(key, keyPath) {
 	        console.log(key, keyPath);
+	        switch(key){
+	        	case '1':
+	        	this.tableData = this.data;
+	        	break;
+	        	case '2':
+	        	this.tableData = this.data.filter(v=>v.status == 'offline')
+	        }
 	        
+	      },
+	      handleClick(row) {
+	        console.log(row);
+	      },
+	      handleSizeChange(val) {
+	        console.log(`每页 ${val} 条`);
+	      },
+	      handleCurrentChange(val) {
+	        console.log(`当前页: ${val}`);
 	      }
 	    }
 	}
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 	.container{
 		width:1200px;
 		margin:0 auto;
