@@ -21,15 +21,107 @@
 		    		
 		    	</el-menu>
 			</div>
+			<div class="total">共50条</div>
+			<el-table
+			  
+		      :data="tableData"
+		      border
+		      style="width: 100%">
+		      <el-table-column
+		        prop="basicinfor"
+		        label="微信基本信息"
+		        width="180">
+		      </el-table-column>
+		      <el-table-column
+		        prop="weixinID"
+		        label="微信ID"
+		        width="180">
+		      </el-table-column>
+		      <el-table-column
+		        prop="friendsnum"
+		        label="好友数">
+		      </el-table-column>
+		      <el-table-column
+		        prop="IMEI"
+		        label="登录设备IMEI号">
+		      </el-table-column>
+		      <el-table-column
+		        prop="status"
+		        label="状态">
+		      </el-table-column>
+		      <el-table-column
+		        label="操作"
+		        width="100">
+		        <template slot-scope="scope">
+		          <el-button @click="handleClick(scope.row)" type="text" size="small">删除</el-button>
+		          
+		        </template>
+		      </el-table-column>
+		    </el-table>
 		</div>
 	</div>
 </template>
 
 <script>
 	export default {
+		methods: {
+	      handleClick(row) {
+	        console.log(row);
+	      }
+	    },
 		data() {
 	      return {
 	        activeIndex: '1',
+	        tableData:[
+	        	{
+	        		basicinfor:'张三1',
+	        		weixinID:'321654asdasd',
+	        		friendsnum:'12',
+	        		IMEI:'1a2b3c4d',
+	        		status:'online',
+
+	        	},
+	        	{
+	        		basicinfor:'张三2',
+	        		weixinID:'321654asdasd',
+	        		friendsnum:'12',
+	        		IMEI:'1a2b3c4d',
+	        		status:'offline',
+
+	        	},
+	        	{
+	        		basicinfor:'张三3',
+	        		weixinID:'321654asdasd',
+	        		friendsnum:'12',
+	        		IMEI:'1a2b3c4d',
+	        		status:'online',
+
+	        	},
+	        	{
+	        		basicinfor:'张三4',
+	        		weixinID:'321654asdasd',
+	        		friendsnum:'12',
+	        		IMEI:'1a2b3c4d',
+	        		status:'offline',
+
+	        	},
+	        	{
+	        		basicinfor:'张三5',
+	        		weixinID:'321654asdasd',
+	        		friendsnum:'12',
+	        		IMEI:'1a2b3c4d',
+	        		status:'online',
+
+	        	},
+	        	{
+	        		basicinfor:'张三6',
+	        		weixinID:'321654asdasd',
+	        		friendsnum:'12',
+	        		IMEI:'1a2b3c4d',
+	        		status:'offline',
+
+	        	},
+	        ]
 	        
 	      };
 	    },
@@ -63,4 +155,10 @@
 		position:absolute;
 		right:0px;
 	}
+	.total{
+		font-size:12px;
+		color:#909399;
+		line-height:24px;
+	}
+	
 </style>
