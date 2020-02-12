@@ -5,6 +5,7 @@ import { Form,FormItem } from 'element-ui'
 import { Input } from 'element-ui'
 import { Table,TableColumn } from 'element-ui'
 import { Pagination } from 'element-ui'
+import { Loading } from 'element-ui'
 
 Vue.use(Button)
 Vue.use(Menu)
@@ -15,3 +16,4 @@ Vue.use(Input)
 Vue.use(Table)
 Vue.use(TableColumn)
 Vue.use(Pagination)
+Vue.use(Loading)

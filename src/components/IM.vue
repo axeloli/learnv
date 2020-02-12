@@ -1,5 +1,5 @@
 <template>
-	<div class="container">
+	<div class="container" v-loading.fullscreen="fullscreenLoading">
 		<div class="contain_top">
 			<el-form class="form_box" label-width="0px">
 			    <el-form-item class="search">
@@ -15,9 +15,9 @@
 		</div>
 		<div class="contain_body">
 			<div class="switch">
-				<el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
-		    		<el-menu-item index="1">全部账号</el-menu-item>
-		    		<el-menu-item index="2">离线账号</el-menu-item>
+				<el-menu :default-active="type" class="el-menu-demo" mode="horizontal" @select="handleSelect">
+		    		<el-menu-item index="ALL">全部账号</el-menu-item>
+		    		<el-menu-item index="OFFLINE">离线账号</el-menu-item>
 		    		
 		    	</el-menu>
 			</div>
@@ -28,17 +28,17 @@
 		      border
 		      style="width: 100%">
 		      <el-table-column
-		        prop="basicinfor"
+		        prop="name"
 		        label="微信基本信息"
 		        width="180">
 		      </el-table-column>
 		      <el-table-column
-		        prop="weixinID"
+		        prop="wxId"
 		        label="微信ID"
 		        width="180">
 		      </el-table-column>
 		      <el-table-column
-		        prop="friendsnum"
+		        prop="friendsNum"
 		        label="好友数">
 		      </el-table-column>
 		      <el-table-column
@@ -64,10 +64,11 @@
 			      @size-change="handleSizeChange"
 			      @current-change="handleCurrentChange"
 	
-			      :page-sizes="[100, 200, 300, 400]"
-			      :page-size="100"
-			      layout="total, sizes, prev, pager, next, jumper"
-			      :total="400">
+			      :page-sizes="[10, 20, 50, 100]"
+			      :page-size="pageSet.pageSize"
+            :current-page="pageSet.pageIndex"
+            :total="pageSet.total"
+			      layout="total, sizes, prev, pager, next, jumper">
 			    </el-pagination>
 			</div>
 		</div>
@@ -75,69 +76,30 @@
 </template>
 
 <script>
+  import tableList from './mock'
+  import mockAxios from './mockAxios'
 	export default {
 		created(){
-			this.tableData = this.data
+      // this.tableData = this.data
+      this.getList()
 		},
 		
 	    
 		data() {
 	      return {
-	        activeIndex: '1',
-	        tableData:[],
-	        data:[
-	        	{
-	        		basicinfor:'张三1',
-	        		weixinID:'321654asdasd',
-	        		friendsnum:'12',
-	        		IMEI:'1a2b3c4d',
-	        		status:'online',
-
-	        	},
-	        	{
-	        		basicinfor:'张三2',
-	        		weixinID:'321654asdasd',
-	        		friendsnum:'12',
-	        		IMEI:'1a2b3c4d',
-	        		status:'offline',
-
-	        	},
-	        	{
-	        		basicinfor:'张三3',
-	        		weixinID:'321654asdasd',
-	        		friendsnum:'12',
-	        		IMEI:'1a2b3c4d',
-	        		status:'online',
-
-	        	},
-	        	{
-	        		basicinfor:'张三4',
-	        		weixinID:'321654asdasd',
-	        		friendsnum:'12',
-	        		IMEI:'1a2b3c4d',
-	        		status:'offline',
-
-	        	},
-	        	{
-	        		basicinfor:'张三5',
-	        		weixinID:'321654asdasd',
-	        		friendsnum:'12',
-	        		IMEI:'1a2b3c4d',
-	        		status:'online',
-
-	        	},
-	        	{
-	        		basicinfor:'张三6',
-	        		weixinID:'321654asdasd',
-	        		friendsnum:'12',
-	        		IMEI:'1a2b3c4d',
-	        		status:'offline',
-
-	        	},
-	        ]
-	        
+          
+          keywords: '', // 搜索框
+          type: 'ALL', // 0.ALL 1.ONLINE 2.OFFLINE
+	        tableData: [],
+	        data: tableList,
+	        pageSet: {  // 页面相关
+            pageIndex: 1,
+            pageSize: 20,
+            total: 0
+          },
+          fullscreenLoading: false,
 	      };
-	    },
+      },
 		methods: {
 	      handleSelect(key, keyPath) {
 	        console.log(key, keyPath);
@@ -146,18 +108,47 @@
 	        	this.tableData = this.data;
 	        	break;
 	        	case '2':
-	        	this.tableData = this.data.filter(v=>v.status == 'offline')
+            this.tableData = this.data.filter(v=>v.status == 'offline');
+            break;
+            default:
+            break;
 	        }
 	        
-	      },
+        },
+        // 获取table数据
+        getList() {
+          let params = {
+            pageIndex: this.pageSet.pageIndex,
+            pageSize: this.pageSet.pageSize,
+            keywords: this.keywords,
+            type: this.type
+          }
+          // 请求时loading弹窗
+          !this.fullscreenLoading && (this.fullscreenLoading = true)
+          mockAxios.post('/getList', params).then(res => {
+            if (res && res.success) {
+              this.tableData = res.data || []
+              this.pageSet.total = res.total || 0
+              this. fullscreenLoading && (this.fullscreenLoading = false)
+            } else {
+              return Promise.reject({errMsg: 'DATA ERROR'})
+            }
+          }).catch(e => {
+            this. fullscreenLoading && (this.fullscreenLoading = false)
+            console.log('get list error', e)
+            this.$message.error(e && e.errMsg || '发生了未知错误');
+          })
+        },
 	      handleClick(row) {
 	        console.log(row);
 	      },
-	      handleSizeChange(val) {
-	        console.log(`每页 ${val} 条`);
+	      handleSizeChange(size) {
+          this.pageSet.pageSize = size
+          this.getList()
 	      },
 	      handleCurrentChange(val) {
-	        console.log(`当前页: ${val}`);
+          this.pageSet.pageIndex = val
+          this.getList()
 	      }
 	    }
 	}
